@@ -19,7 +19,7 @@ const constructIndex = async () => {
 
     data.posts.forEach(post => {
       // Ex: https://cdn-images-1.medium.com/max/800/1*uSfRm31oD_2bgNgYt-Hfaw.gif and
-      // https://cdn-images-1.medium.com/max/1200/0*Ga1fGBrxkoKgfzbu
+      // https://miro.medium.com/max/1000/0*g_FeNjTZ2ZsfhD7_.jpg
       const regex = /https:\/\/cdn\-images\-1\.medium\.com\/max\/\d*\/.+?(?=\.\w{3,4}|\")(\.\w{3,4})?/g;
       let mediumFeatureImg;
       let mediumArticleImgs;

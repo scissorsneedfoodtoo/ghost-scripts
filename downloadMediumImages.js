@@ -1,26 +1,36 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const dir = './images';
+const imagesDir = './images';
 
-if (!fs.existsSync(dir)){
-  fs.mkdirSync(dir);
+// Create images directory if 
+// one doesn't already exist
+if (!fs.existsSync(imagesDir)){
+  fs.mkdirSync(imagesDir);
 }
 
-const data = fs.readFileSync('test.json', 'utf8');
+const data = fs.readFileSync('affectedArticles.json', 'utf8');
 const articles = JSON.parse(data);
-const imgUrls = articles.reduce((arr, article) => {
-  if (article.feature_image) {
-    arr.push(article.feature_image);
-  }
 
-  if (article.article_images.length > 0) {
-    article.article_images.forEach(url => arr.push(url));
+let imgUrls = articles.reduce((arr, article) => {
+  const featImg = article.feature_image;
+  const articleImgsArr = article.article_images;
+
+  if (featImg && !arr.includes(featImg)) {
+    arr.push(featImg);
+  }
+  
+  if (articleImgsArr.length > 0) {
+    articleImgsArr.forEach(url => arr.includes(url) ? arr : arr.push(url));
   }
   return arr;
 }, []);
+// console.log(imgUrls.length);
 
-async function downloadImage(url, filename) {  
+const downloadedImgs = fs.readdirSync(imagesDir, 'utf8');
+// console.log(downloadedImgs.length);
+
+async function downloadImg(url, filename) {
   const filePath = path.resolve(__dirname, 'images', filename);
   const writer = fs.createWriteStream(filePath);
 
@@ -33,16 +43,55 @@ async function downloadImage(url, filename) {
   response.data.pipe(writer);
 
   return new Promise((resolve, reject) => {
-    writer.on('finish', resolve)
-    writer.on('error', reject)
-  })
+    writer.on('finish', resolve);
+    writer.on('error', reject);
+  });
 }
 
-function getFilename(url) {
-  const regex = /https:\/\/cdn\-images\-1\.medium\.com\/max\/\d*\//;
-  return url.replace(regex, '');
+function getFileName(url) {
+  const cdnRegex = /https:\/\/cdn\-images\-1\.medium\.com\/max\/\d*\//;
+  const miroRegex = /https:\/\/miro\.medium\.com\/max\/\d*\//;
+
+  if (url.includes('https://cdn-images-1')) {
+    return url.replace(cdnRegex, '');
+  } else {
+    return url.replace(miroRegex, '');
+  }
 }
 
-// imgUrls.forEach(url => {
-//   downloadImage(url, getFilename(url));
-// });
+async function downloadAllImgs(arr) {
+  const delay = m => new Promise(resolve => setTimeout(resolve, m));
+
+  for (let i = 0; i < arr.length; i++) {
+    const currUrl = arr[i];
+    const currFileName = getFileName(currUrl);
+
+    if (downloadedImgs.includes(currFileName)) {
+      console.log(`${currUrl} skipped`);
+    } else {
+      await downloadImg(currUrl, currFileName);
+      console.log(`${currUrl} downloaded`);
+      await delay(300);
+    }
+
+    // await downloadImg(currUrl, currFileName);
+    // console.log(`${currUrl} downloaded`);
+    // await delay(500);
+  }
+}
+
+// downloadAllImgs(imgUrls);
+
+const allFileNames = imgUrls.map(url => {
+  return getFileName(url);
+});
+
+
+const missing = downloadedImgs.filter(file => {
+    return !allFileNames.includes(file);
+  });
+
+// downloadAllImgs(missing);
+// console.log(missing);
+
+// console.log(imgUrls.length, downloadedImgs.length);
