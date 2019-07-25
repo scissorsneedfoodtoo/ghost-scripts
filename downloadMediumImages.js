@@ -9,7 +9,7 @@ if (!fs.existsSync(imagesDir)){
   fs.mkdirSync(imagesDir);
 }
 
-const data = fs.readFileSync('affectedArticles.json', 'utf8');
+const data = fs.readFileSync('affectedArticlesHiRez.json', 'utf8');
 const articles = JSON.parse(data);
 
 let imgUrls = articles.reduce((arr, article) => {
@@ -71,7 +71,7 @@ async function downloadAllImgs(arr) {
     } else {
       await downloadImg(currUrl, currFileName);
       console.log(`${currUrl} downloaded`);
-      await delay(300);
+      await delay(1000);
     }
 
     // await downloadImg(currUrl, currFileName);
@@ -80,18 +80,18 @@ async function downloadAllImgs(arr) {
   }
 }
 
-// downloadAllImgs(imgUrls);
+downloadAllImgs(imgUrls);
 
-const allFileNames = imgUrls.map(url => {
-  return getFileName(url);
-});
+// const allFileNames = imgUrls.map(url => {
+//   return getFileName(url);
+// });
 
 
-const missing = downloadedImgs.filter(file => {
-    return !allFileNames.includes(file);
-  });
+// const missing = downloadedImgs.filter(file => {
+//   return !allFileNames.includes(file);
+// });
 
-// downloadAllImgs(missing);
 // console.log(missing);
+// downloadAllImgs(missing);
 
 // console.log(imgUrls.length, downloadedImgs.length);
