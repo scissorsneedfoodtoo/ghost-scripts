@@ -1,4 +1,10 @@
-require('dotenv').config();
+const path = require('path');
+
+const envPath = path.resolve(__dirname, '.env');
+require('dotenv').config({ path: envPath });
+
+const { GHOST_CLIENT_KEY } = process.env;
+
 const axios = require('axios');
 const fs = require('fs');
 
@@ -15,7 +21,7 @@ const constructIndex = async () => {
   const posts = [];
 
   while (currPage && currPage <= lastPage) {
-    const data = await getJson(`https://www.freecodecamp.org/news/ghost/api/v2/content/posts/?key=${process.env.GHOST_CLIENT_KEY}&include=tags,authors&page=${currPage}`);
+    const data = await getJson(`https://www.freecodecamp.org/news/ghost/api/v2/content/posts/?key=${GHOST_CLIENT_KEY}&include=tags,authors&page=${currPage}`);
 
     data.posts.forEach(post => {
       const thisPost = {
@@ -23,7 +29,7 @@ const constructIndex = async () => {
         author: {
           name: post.primary_author.name,
           url: post.primary_author.url,
-          profile_image: post.primary_author.profile_image
+          profileImage: post.primary_author.profile_image
         },
         tags: post.tags.map(obj => {
           return {
@@ -32,9 +38,9 @@ const constructIndex = async () => {
           }
         }),
         url: post.url,
-        feature_image: post.feature_image,
-        ghost_id: post.id,
-        published_at: post.published_at
+        featureImage: post.feature_image,
+        ghostId: post.id,
+        publishedAt: post.published_at
       }
 
       posts.push(thisPost);
