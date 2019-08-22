@@ -40,7 +40,8 @@ const constructIndex = async () => {
         url: post.url,
         featureImage: post.feature_image,
         ghostId: post.id,
-        publishedAt: post.published_at
+        publishedAt: post.published_at,
+        publishedAtTimestamp: new Date(post.published_at).getTime() / 1000 | 0
       }
 
       posts.push(thisPost);
@@ -52,7 +53,7 @@ const constructIndex = async () => {
     console.log(posts);
 
     fs.writeFileSync('posts.json', JSON.stringify(posts, null, 2));
-    await delay(1000);
+    await delay(500);
   }
 }
 
