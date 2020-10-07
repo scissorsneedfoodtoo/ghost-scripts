@@ -3,7 +3,8 @@ const path = require('path');
 const envPath = path.resolve(__dirname, '.env');
 require('dotenv').config({ path: envPath });
 
-const { GHOST_CLIENT_KEY } = process.env;
+const { EN_GHOST_CLIENT_KEY: GHOST_CLIENT_KEY, EN_API_URL: API_URL } = process.env;
+// const { ZH_GHOST_CLIENT_KEY: GHOST_CLIENT_KEY, ZH_API_URL: API_URL } = process.env;
 
 const axios = require('axios');
 const fs = require('fs');
@@ -29,13 +30,14 @@ const constructIndex = async () => {
   const posts = [];
 
   while (currPage && currPage <= lastPage) {
-    const data = await getJson(`https://www.freecodecamp.org/news/ghost/api/v2/content/posts/?key=${GHOST_CLIENT_KEY}&include=tags,authors&page=${currPage}`);
+    const data = await getJson(`${API_URL}/ghost/api/v2/content/posts/?key=${GHOST_CLIENT_KEY}&include=tags,authors&page=${currPage}`);
 
     data.posts.forEach(post => {
       const currProfileImg = post.primary_author.profile_image;
       const profileImageUrl = (currProfileImg && currProfileImg.includes('//www.gravatar.com/avatar/')) ? `https:${currProfileImg}` : currProfileImg;
 
       const thisPost = {
+        objectID: post.id,
         title: post.title,
         author: {
           name: post.primary_author.name,
@@ -45,12 +47,11 @@ const constructIndex = async () => {
         tags: post.tags.map(obj => {
           return {
             name: obj.name,
-            url: obj.url.includes('404') ? `https://www.freecodecamp.org/news/tag/${dasherize(obj.name)}/` : obj.url // occasionally gets a 404 -- maybe if there's only one article with this tag?
+            url: obj.url.includes('404') ? `${API_URL}/tag/${dasherize(obj.name)}/` : obj.url // occasionally gets a 404 -- maybe if there's only one article with this tag?
           }
         }),
         url: post.url,
         featureImage: post.feature_image,
-        ghostId: post.id,
         publishedAt: post.published_at,
         publishedAtTimestamp: new Date(post.published_at).getTime() / 1000 | 0
       }

@@ -15,22 +15,23 @@ const constructIndex = async () => {
   const posts = [];
 
   while (currPage && currPage <= lastPage) {
-    const data = await getJson(`https://www.freecodecamp.org/news/ghost/api/v2/content/posts/?key=${process.env.GHOST_CLIENT_KEY}&include=tags,authors&page=${currPage}`);
+    const data = await getJson(`https://www.freecodecamp.org/news/ghost/api/v2/content/posts/?key=${process.env.PRD_GHOST_CLIENT_KEY}&include=tags,authors&page=${currPage}`);
 
     data.posts.forEach(post => {
       // Ex: https://cdn-images-1.medium.com/max/800/1*uSfRm31oD_2bgNgYt-Hfaw.gif and
       // https://miro.medium.com/max/1000/0*g_FeNjTZ2ZsfhD7_.jpg
-      const regex = /https:\/\/cdn\-images\-1\.medium\.com\/max\/\d*\/.+?(?=\.\w{3,4}|\")(\.\w{3,4})?/g;
+      // const regex = /https:\/\/cdn\-images\-1\.medium\.com\/max\/\d*\/.+?(?=\.\w{3,4}|\")(\.\w{3,4})?/g;
+      const regex = /https:\/\/miro\.medium\.com\/.+?(?=\.\w{3,4}|\")(\.\w{3,4})?/g;
       let mediumFeatureImg;
       let mediumArticleImgs;
 
       // Account for articles without feature images or posts
       if (post.feature_image) {
-        mediumFeatureImg = post.feature_image.includes('https://cdn-images-1.medium.com') ? post.feature_image : '';
+        mediumFeatureImg = post.feature_image.includes('https://miro.medium.com') ? post.feature_image : '';
       }
 
       if (post.html) {
-        mediumArticleImgs = post.html.includes('https://cdn-images-1.medium.com') ? post.html.match(regex) : [];
+        mediumArticleImgs = post.html.includes('https://miro.medium.com') ? post.html.match(regex) : [];
       }
 
       if (mediumFeatureImg || mediumArticleImgs.length > 0) {
@@ -50,7 +51,7 @@ const constructIndex = async () => {
 
     console.log(posts);
 
-    fs.writeFileSync('test.json', JSON.stringify(posts, null, 2));
+    fs.writeFileSync('miroImages.json', JSON.stringify(posts, null, 2));
     await delay(500);
   }
 }

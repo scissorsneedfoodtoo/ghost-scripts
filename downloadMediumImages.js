@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const imagesDir = './images';
+const imagesDir = './miro-images';
 
 // Create images directory if 
 // one doesn't already exist
@@ -9,7 +9,8 @@ if (!fs.existsSync(imagesDir)){
   fs.mkdirSync(imagesDir);
 }
 
-const data = fs.readFileSync('affectedArticlesHiRez.json', 'utf8');
+// const data = fs.readFileSync('affectedArticlesHiRez.json', 'utf8');
+const data = fs.readFileSync('miroImages.json', 'utf8');
 const articles = JSON.parse(data);
 
 let imgUrls = articles.reduce((arr, article) => {
@@ -31,7 +32,7 @@ const downloadedImgs = fs.readdirSync(imagesDir, 'utf8');
 // console.log(downloadedImgs.length);
 
 async function downloadImg(url, filename) {
-  const filePath = path.resolve(__dirname, 'images', filename);
+  const filePath = path.resolve(__dirname, imagesDir, filename);
   const writer = fs.createWriteStream(filePath);
 
   const response = await axios({
@@ -50,13 +51,16 @@ async function downloadImg(url, filename) {
 
 function getFileName(url) {
   const cdnRegex = /https:\/\/cdn\-images\-1\.medium\.com\/max\/\d*\//;
-  const miroRegex = /https:\/\/miro\.medium\.com\/max\/\d*\//;
+  // const miroRegex = /https:\/\/miro\.medium\.com\/\d*\//;
+  const miroRegex = /\d\*.*(?=\.\w{3,4}|\")(\.\w{3,4})?/
 
-  if (url.includes('https://cdn-images-1')) {
-    return url.replace(cdnRegex, '');
-  } else {
-    return url.replace(miroRegex, '');
-  }
+  // if (url.includes('https://cdn-images-1')) {
+  //   return url.replace(cdnRegex, '');
+  // } else {
+  //   return url.replace(miroRegex, '');
+  // }
+
+  return url.match(miroRegex)[0];
 }
 
 async function downloadAllImgs(arr) {
@@ -66,17 +70,17 @@ async function downloadAllImgs(arr) {
     const currUrl = arr[i];
     const currFileName = getFileName(currUrl);
 
-    if (downloadedImgs.includes(currFileName)) {
-      console.log(`${currUrl} skipped`);
-    } else {
-      await downloadImg(currUrl, currFileName);
-      console.log(`${currUrl} downloaded`);
-      await delay(1000);
-    }
+    // if (downloadedImgs.includes(currFileName)) {
+    //   console.log(`${currUrl} skipped`);
+    // } else {
+    //   await downloadImg(currUrl, currFileName);
+    //   console.log(`${currUrl} downloaded`);
+    //   await delay(1000);
+    // }
 
-    // await downloadImg(currUrl, currFileName);
-    // console.log(`${currUrl} downloaded`);
-    // await delay(500);
+    await downloadImg(currUrl, currFileName);
+    console.log(`${currUrl} downloaded`);
+    await delay(500);
   }
 }
 
