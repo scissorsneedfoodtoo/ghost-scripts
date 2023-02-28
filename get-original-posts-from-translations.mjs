@@ -1,6 +1,6 @@
 import GhostContentAPI from '@tryghost/content-api';
 import { writeFileSync } from 'fs';
-import { keys, pause } from './utils.mjs';
+import { keys, delay } from './utils.mjs';
 
 const translatedPostURLs = [
   'https://www.freecodecamp.org/espanol/news/aprende-git-y-github-curso-desde-cero/', // No translation – should not appear in original or translated files
@@ -25,7 +25,7 @@ const getPostByURL = async url => {
     });
 
     console.log(`Fetched post: ${post.title}`);
-    await pause(0.2);
+    await delay(0.2);
     return post;
   } catch (err) {
     console.log(`Error fetching post: ${url}`);

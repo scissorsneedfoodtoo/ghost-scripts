@@ -1,6 +1,6 @@
 import GhostContentAPI from '@tryghost/content-api';
 import { writeFileSync } from 'fs';
-import { keys, pause } from './utils.mjs';
+import { keys, delay } from './utils.mjs';
 
 const lang = 'english';
 const api = new GhostContentAPI({ ...keys[lang] });
@@ -33,7 +33,7 @@ const getAllPosts = async () => {
         `all-${lang}-posts.json`,
         JSON.stringify(allPosts, null, 2)
       );
-      await pause(0.5);
+      await delay(0.5);
     } catch (err) {
       console.log(`Error fetching page ${currPage} of ${lastPage}...`);
       console.log(err);

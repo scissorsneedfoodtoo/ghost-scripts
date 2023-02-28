@@ -14,7 +14,7 @@ const keys = {
   }
 };
 
-const pause = seconds => {
+const delay = seconds => {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(seconds);
@@ -22,4 +22,4 @@ const pause = seconds => {
   });
 };
 
-export { keys, pause };
+export { keys, delay };
