@@ -14,15 +14,12 @@ const keys = {
   }
 };
 
-const pause = (seconds) => {
-  return new Promise((resolve) => {
+const pause = seconds => {
+  return new Promise(resolve => {
     setTimeout(() => {
       resolve(seconds);
     }, seconds * 1000);
   });
-}
-
-export {
-  keys,
-  pause
 };
+
+export { keys, pause };

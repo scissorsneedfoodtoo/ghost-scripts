@@ -25,11 +25,14 @@ const getPostsBySlug = async () => {
 
     console.log(`Fetched translated post with slug: ${translatedSlug}...`);
     translatedPosts.push(translatedPost);
-    await pause(.1);
+    await pause(0.1);
   }
 
   for (const translatedPost of translatedPosts) {
-    const headAndFootCode = [translatedPost.codeinjection_head, translatedPost.codeinjection_foot]
+    const headAndFootCode = [
+      translatedPost.codeinjection_head,
+      translatedPost.codeinjection_foot
+    ]
       .filter(Boolean)
       .join();
     const originalPostRegex =
@@ -46,12 +49,15 @@ const getPostsBySlug = async () => {
 
     console.log(`Fetched original post with slug: ${originalSlug}...`);
     originalPosts.push(originalPost);
-    await pause(.1);
+    await pause(0.1);
   }
 
   console.log(`Writing files...`);
-  writeFileSync('translated-posts.json', JSON.stringify(translatedPosts, null, 2));
+  writeFileSync(
+    'translated-posts.json',
+    JSON.stringify(translatedPosts, null, 2)
+  );
   writeFileSync('original-posts.json', JSON.stringify(originalPosts, null, 2));
-}
+};
 
 getPostsBySlug();

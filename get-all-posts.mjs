@@ -20,7 +20,7 @@ const getAllPosts = async () => {
       limit
     });
 
-    data.forEach((post) => {
+    data.forEach(post => {
       allPosts.push(post);
     });
 
@@ -30,8 +30,8 @@ const getAllPosts = async () => {
     currPage = data.meta.pagination.next;
 
     writeFileSync('all-posts.json', JSON.stringify(allPosts, null, 2));
-    await pause(.5);
+    await pause(0.5);
   }
-}
+};
 
 getAllPosts();
