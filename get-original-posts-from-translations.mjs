@@ -5,7 +5,9 @@ import { keys, pause } from './utils.mjs';
 const translatedPostURLs = [
   'https://www.freecodecamp.org/espanol/news/aprende-git-y-github-curso-desde-cero/', // No translation – should not appear in original or translated files
   'https://www.freecodecamp.org/espanol/news/que-es-una-cadena-de-caracteres-string-en-javascript',
-  'https://www.freecodecamp.org/espanol/news/cual-es-la-direccion-ip-de-mi-router-como-encontrar-mi-direccion-wifi'
+  'https://www.freecodecamp.org/espanol/news/cual-es-la-direccion-ip-de-mi-router-como-encontrar-mi-direccion-wifi',
+  'https://www.freecodecamp.org/espanol/news/que-es-html-definicion-y-significado-de-lenguaje-de-marcado-de-hipertexto/',
+  'https://www.freecodecamp.org/espanol/news/que-es-tailwind-css-guia-para-principiantes/'
 ];
 
 const getPostByURL = async url => {
